@@ -1,0 +1,6 @@
+{
+  "name": "تراز | سامانه جامع مدیریت مالی شخصی",
+  "description": "سیستم عامل هوشمند و محلی مدیریت مالی شخصی، حساب‌ها، پیامک‌های بانکی، بودجه‌بندی و گزارشات با معماری Zero-Knowledge و رمزنگاری داده‌ها",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,94 @@
+name: Build Android APK (React Native)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build Type (debug / release)'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+
+jobs:
+  build-apk:
+    name: 📱 Compile Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 📦 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 🤖 Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 📥 Install Dependencies
+        run: |
+          npm ci || npm install --legacy-peer-deps
+
+      - name: 🔨 Build Android APK
+        run: |
+          echo "🚀 Starting Android Compilation..."
+          if [ -d "android" ]; then
+            cd android
+            chmod +x gradlew
+            if [ "${{ github.event.inputs.build_type }}" == "release" ]; then
+              ./gradlew assembleRelease --no-daemon
+            else
+              ./gradlew assembleDebug --no-daemon
+            fi
+            cd ..
+          else
+            echo "ℹ️ Using Expo EAS / Prebuild CLI..."
+            npx expo prebuild --platform android --clean
+            cd android
+            chmod +x gradlew
+            ./gradlew assembleDebug --no-daemon
+            cd ..
+          fi
+
+      - name: 🔍 Find Generated APK
+        id: find_apk
+        run: |
+          APK_PATH=$(find android/app/build/outputs/apk/ -name "*.apk" | head -n 1)
+          if [ -f "$APK_PATH" ]; then
+            echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+            echo "✅ Found APK at: $APK_PATH"
+          else
+            echo "❌ APK file not found!"
+            exit 1
+          fi
+
+      - name: 📤 Upload APK Artifact (Direct Download Link)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Taraz-Finance-Android-App
+          path: ${{ steps.find_apk.outputs.apk_path }}
+          retention-days: 30
+
+      - name: 🚀 Create GitHub Release (Optional for Releases)
+        if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.find_apk.outputs.apk_path }}
+          name: "تراز مالی - نسخه اندروید ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
