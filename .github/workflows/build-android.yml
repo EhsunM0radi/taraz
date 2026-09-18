@@ -39,10 +39,15 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: 🤖 Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 📦 Install Android SDK packages
         run: |
-          echo "Setting up Android SDK licenses and tools..."
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager --install \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0"
 
       - name: 📥 Install Dependencies
         run: npm ci
