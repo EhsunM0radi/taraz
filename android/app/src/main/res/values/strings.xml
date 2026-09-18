@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">تراز | حسابداری شخصی</string>
+    <string name="title_activity_main">تراز | حسابداری شخصی</string>
+    <string name="package_name">com.taraz.finance</string>
+    <string name="custom_url_scheme">com.taraz.finance</string>
+</resources>
