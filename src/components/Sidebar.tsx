@@ -7,8 +7,7 @@ import {
   Target,
   Users,
   CalendarSync,
-  User,
-  Code2
+  User
 } from 'lucide-react';
 
 export type NavTabId =
@@ -54,7 +53,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'debts', label: 'افراد و طلب / بدهی', icon: Users },
     { id: 'recurring', label: 'تراکنش‌های دوره‌ای', icon: CalendarSync },
     { id: 'profile', label: 'پروفایل و تنظیمات', icon: User },
-    { id: 'architecture', label: 'مستندات و معماری فنی', icon: Code2 },
   ];
 
   return (
